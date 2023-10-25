@@ -25,39 +25,36 @@ router = Router()
 
 @router.message(Command("start"))
 async def start_handler(msg: Message):
+    print(msg.from_user.id)
     connection = sqlite3.connect('database/Users.db')
     cursor = connection.cursor()
     user_id = msg.from_user.id
     user_check_admin = f'''SELECT EXISTS(SELECT Fio FROM Admin WHERE Tg_users_ID = ?)'''
 
-    # print(a)
-    # fio = 'a'
-    # for i in a:
-    #     if list(i)[0] == 1:
-    #         print(1)
-    #         print(i)
-    #     else:
-    #         print(564)
-    # print(fio)
-    user_check_teacher = f'''SELECT Fio FROM Teacher WHERE Tg_users_ID = ?'''
-    user_check_student = f'''SELECT Fio FROM Student WHERE Tg_users_ID = ?'''
-    check_admin = cursor.execute(user_check_admin, (user_id,))
-    check_teacher = cursor.execute(user_check_teacher, (user_id,))
-    check_student = cursor.execute(user_check_student, (user_id,))
     status = 0
-    for check in check_admin:
-        if list(check)[0] == 1:
+    user_check_teacher = f'''SELECT EXISTS(SELECT Fio FROM Teacher WHERE Tg_users_ID = ?)'''
+    user_check_student = f'''SELECT EXISTS(SELECT Fio FROM Student WHERE Tg_users_ID = ?)'''
+    check_admin = cursor.execute(user_check_admin, (user_id,))
+
+
+    for check1 in check_admin:
+        if list(check1)[0] == 1:
             status = 'admin'
-    for check in check_teacher:
-        if list(check)[0] == 2:
+        break
+    check_teacher = cursor.execute(user_check_teacher, (user_id,))
+    for check2 in check_teacher:
+        if list(check2)[0] == 1:
             status = 'teacher'
-    for check in check_student:
-        if list(check)[0] == 2:
+        break
+    check_student = cursor.execute(user_check_student, (user_id,))
+    for check3 in check_student:
+        if list(check3)[0] == 1:
             status = 'student'
+        break
 
+    print(status)
 
-
-    if (status == 'admin'):
+    if status == 'admin':
         builder = InlineKeyboardBuilder()
         builder.add(types.InlineKeyboardButton(
             text="Админ-панель",
@@ -68,7 +65,7 @@ async def start_handler(msg: Message):
             reply_markup=builder.as_markup()
             )
 
-    elif (status == 'teacher'):
+    elif status == 'teacher':
         builder = InlineKeyboardBuilder()
         builder.add(types.InlineKeyboardButton(
             text="кнопка преподавателя",
@@ -78,7 +75,7 @@ async def start_handler(msg: Message):
             f'Привет,преподаватель {msg.from_user.full_name}, нажми на кнопку с функцией, которая тебе нужна',
             reply_markup=builder.as_markup()
         )
-    elif (status == 'student'):
+    elif status == 'student':
         builder = InlineKeyboardBuilder()
         builder.add(types.InlineKeyboardButton(
             text="кнопка студента",
@@ -88,6 +85,8 @@ async def start_handler(msg: Message):
             f'Привет,студент {msg.from_user.full_name}, нажми на кнопку с функцией, которая тебе нужна',
             reply_markup=builder.as_markup()
         )
+
+
 
 
 
