@@ -5,7 +5,7 @@ from aiogram import types, F, Router
 from aiogram.handlers import message
 from aiogram.types import Message
 from aiogram.filters import Command, CommandStart
-from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardBuilder
 import aiogram.filters.callback_data as filters
 # from aiogram.contrib.fsm_storage.memory import MemoryStorage # Для проф бота
 from aiogram.utils.markdown import hbold
@@ -58,7 +58,7 @@ async def start_handler(msg: Message):
         builder = InlineKeyboardBuilder()
         builder.add(types.InlineKeyboardButton(
             text="Админ-панель",
-            callback_data="admin_panel")
+            callback_data="admin_menu")
         )
         await msg.answer(
             f'Привет,Админ {msg.from_user.full_name}, нажми на кнопку, чтобы войти в админ-панель',
@@ -86,7 +86,35 @@ async def start_handler(msg: Message):
             reply_markup=builder.as_markup()
         )
 
+@router.callback_query(F.data == 'admin_menu')
+async def admin_menu(callback: types.CallbackQuery):
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        types.KeyboardButton(text='Административные отделения', callback_data='administrative_department'),
+        types.KeyboardButton(text='Кнопка 2',callback_data=None)
+    )
+    await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
 
 
+@router.callback_query(F.data == 'teacher_menu')
+async def admin_menu(callback: types.CallbackQuery):
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        types.KeyboardButton(text='Уч. материалы и д/з', callback_data=None),
+        types.KeyboardButton(text='Кнопка 2',callback_data=None)
+    )
+    await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
 
+@router.callback_query(F.data == 'student_menu')
+async def admin_menu(callback: types.CallbackQuery):
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        types.KeyboardButton(text='Уч. материалы и д/з', callback_data=None),
+        types.KeyboardButton(text='Расписание',callback_data=None)
+    )
+    await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
+
+@router.callback_query(F.data == 'administrative_department')
+async def admin_adminis_depart():
+    pass
 
