@@ -3,18 +3,18 @@ import sqlite3
 connection = sqlite3.connect('database/my.db')
 cursor = connection.cursor()
 
-def admin_menu():
+def admin_menu():      #для админа
     a = input()
     print("Меню администратора")
     if (a == 1):
         adding_a_department()
-def adding_a_department():
+def adding_a_department():      #для админа
     id = input()
     name = input()
     email = input()
     department_mode = input()
     cursor.execute('INSERT INTO users (id, name, email, department_mode) VALUES (?, ?, ?, ?)', (id, name, email, department_mode))
-def student():
+def student():      #для студента
     cursor.execute('SELECT * FROM Users')
     users = cursor.fetchall()
 
