@@ -6,14 +6,15 @@ def prepod():
     connection = sqlite3.connect('database/Users.db')
     cursor = connection.cursor()
 
+    id = input("Введите айди: ")
     weak_day = input("Введите день недели: ")
     data = input("Введите дату: ")
     group = input("Введите группу: ")
     teacher = input("Введите учителя: ")
     lesson = input("Введите урок: ")
-    homework = input("Введите задание: ")
+    href = 'database/homework/dz.docx'
 
-    connection.execute("INSERT INTO homework VALUES (?, ?, ?, ?, ?, ?)", (weak_day, data, group, teacher, lesson, homework))
+    connection.execute("INSERT INTO homework VALUES (id = ?, weak_day = ?, data = ?, group = ?, teacher = ?, lesson = ?, href = ?)", (id, weak_day, data, group, teacher, lesson, href))
     connection.commit()
     print("Задание добавлено успешно!")
 
