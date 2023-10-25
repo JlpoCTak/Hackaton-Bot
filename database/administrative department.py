@@ -11,7 +11,6 @@ email TEXT NOT NULL,
 )
 ''')
 
-cursor.execute('CREATE INDEX idx_email ON Users (email)')
 cursor.execute('INSERT INTO Users (username, email) VALUES (?, ?)', ('newuser', 'newuser@example.com'))
 
 connection.commit()
