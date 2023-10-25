@@ -34,3 +34,6 @@ async def start_handler(msg: Message):
         reply_markup=builder.as_markup()
         )
 
+@router.callback_query(F.data == 'Test')
+async def test():
+    pass
