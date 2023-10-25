@@ -1,10 +1,10 @@
 import sqlite3
 
-<<<<<<< Updated upstream
+
 connection = sqlite3.connect('my_database.db')
-=======
+
 connection = sqlite3.connect('MeBase.db')
->>>>>>> Stashed changes
+
 cursor = connection.cursor()
 
 cursor.execute('''

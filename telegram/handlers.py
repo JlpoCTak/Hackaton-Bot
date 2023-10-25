@@ -95,6 +95,25 @@ async def admin_menu(callback: types.CallbackQuery):
     )
     await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
 
+
+@router.callback_query(F.data == 'teacher_menu')
+async def admin_menu(callback: types.CallbackQuery):
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        types.KeyboardButton(text='Уч. материалы и д/з', callback_data=None),
+        types.KeyboardButton(text='Кнопка 2',callback_data=None)
+    )
+    await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
+
+@router.callback_query(F.data == 'student_menu')
+async def admin_menu(callback: types.CallbackQuery):
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        types.KeyboardButton(text='Уч. материалы и д/з', callback_data=None),
+        types.KeyboardButton(text='Расписание',callback_data=None)
+    )
+    await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
+
 @router.callback_query(F.data == 'administrative_department')
 async def admin_adminis_depart():
     pass
