@@ -68,21 +68,21 @@ async def start_handler(msg: Message):
     elif status == 'teacher':
         builder = InlineKeyboardBuilder()
         builder.add(types.InlineKeyboardButton(
-            text="кнопка преподавателя",
-            callback_data="func_1")
+            text="Меню преподавателей",
+            callback_data="teacher_menu")
         )
         await msg.answer(
-            f'Привет,преподаватель {msg.from_user.full_name}, нажми на кнопку с функцией, которая тебе нужна',
+            f'Привет,преподаватель {msg.from_user.full_name}, нажми на кнопку меню',
             reply_markup=builder.as_markup()
         )
     elif status == 'student':
         builder = InlineKeyboardBuilder()
         builder.add(types.InlineKeyboardButton(
-            text="кнопка студента",
-            callback_data="Test")
+            text="Меню студента",
+            callback_data="student_menu")
         )
         await msg.answer(
-            f'Привет,студент {msg.from_user.full_name}, нажми на кнопку с функцией, которая тебе нужна',
+            f'Привет,студент {msg.from_user.full_name}, нажми на кнопку меню',
             reply_markup=builder.as_markup()
         )
 
@@ -90,6 +90,3 @@ async def start_handler(msg: Message):
 
 
 
-@router.message(Command("Logging"))
-async def Logging_or_register(msg: types.Message):
-    await msg.answer("Хотите-ли ")
