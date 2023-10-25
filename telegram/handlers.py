@@ -12,8 +12,8 @@ from aiogram.filters.state import State, StatesGroup
 from aiogram.filters.state import State, StatesGroup
 import json
 
-from kb import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
-import text
+# from kb import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
+# import text
 
 # from prof_test import test_holland
 router = Router()
