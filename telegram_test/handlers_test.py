@@ -1,16 +1,19 @@
 import time
+import logging
 
 from aiogram import types, F, Router
 from aiogram.handlers import message
 from aiogram.types import Message
 from aiogram.filters import Command, CommandStart
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup, InlineKeyboardButton
 import aiogram.filters.callback_data as filters
+# from aiogram.contrib.fsm_storage.memory import MemoryStorage # Для проф бота
 from aiogram.utils.markdown import hbold
 from aiogram.fsm.context import FSMContext
 from aiogram.filters.state import State, StatesGroup
-from aiogram.filters.state import State, StatesGroup
 import json
+import sqlite3
+
 
 # from kb import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 # import text
