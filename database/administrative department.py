@@ -18,6 +18,10 @@ def admin_menu():
     print("Меню администратора")
     if (a == 1):
         adding_a_department()
+    elif (a == 2):
+        student()
+    else : print("не правильный выбор, попробуйте снова")
+    admin_menu()
 def adding_a_department():
     id = input()
     name = input()
@@ -34,8 +38,6 @@ adding_a_department()
 connection.commit()
 connection.close()
 
-connection.commit()
-connection.close()
-
 # 1 функция для админ панели  в базу записывается режим отделения, контактная информация, название административного отделения
 # 2 функция для пользователей берет данные из базы
+# C:\Users\Эмиль\OneDrive\Documents\GitHub\Hackaton-Bot
