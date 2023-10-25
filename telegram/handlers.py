@@ -114,7 +114,30 @@ async def admin_menu(callback: types.CallbackQuery):
     )
     await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
 
-@router.callback_query(F.data == 'administrative_department')
-async def admin_adminis_depart():
-    pass
+class Loggin(StatesGroup):
+    admin_name = State()
+    admin_email = State()
+    admin_department_mode = State()
+@router.message(F.text =='Административные отделения')
+async def admin_administrative_depart(msg: Message, state: FSMContext):
+    connection = sqlite3.connect('database/Users.db')
+    cursor = connection.cursor()
+    user_check_administrative_departament = f'''SELECT EXISTS(SELECT name FROM administrative_department WHERE name= ?)'''
+    name = message
+    print(name)
+    check_administrative_departament = cursor.execute(user_check_administrative_departament, (name,))
+
+    await msg.answer(
+        text= "Введите название департамента",
+    )
+    for check1 in check_administrative_departament:
+        if list(check1)[0] == 1:
+            status1 = 'Вы вошли в департамент'
+        break
+
+    print(status1)
+
+    if status1 == 'Вы вошли в департамент':
+        await msg.anwer()
+
 
