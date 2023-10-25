@@ -3,7 +3,7 @@
 import sqlite3
 
 def prepod():
-    connection = sqlite3.connect('database/Users.db')
+    connection = sqlite3.connect('Users.db')
     cursor = connection.cursor()
 
     id = input("Введите айди: ")
@@ -14,7 +14,11 @@ def prepod():
     lesson = input("Введите урок: ")
     href = 'database/homework/dz.docx'
 
+<<<<<<< Updated upstream
     connection.execute("INSERT INTO homework VALUES (id = ?, weak_day = ?, data = ?, group = ?, teacher = ?, lesson = ?, href = ?)", (id, weak_day, data, group, teacher, lesson, href))
+=======
+    cursor.execute("INSERT INTO homework VALUES (?, ?, ?, ?, ?, ?)", (weak_day, data, group, teacher, lesson, homework))
+>>>>>>> Stashed changes
     connection.commit()
     print("Задание добавлено успешно!")
 
