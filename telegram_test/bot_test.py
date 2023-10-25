@@ -6,7 +6,7 @@ import os
 from aiogram import Bot, Dispatcher, Router, types
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
-from handlers import router
+from handlers_test import router
 
 
 TOKEN = os.environ['TOKEN']
