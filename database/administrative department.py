@@ -23,11 +23,11 @@ def admin_menu():
     else : print("не правильный выбор, попробуйте снова")
     admin_menu()
 def adding_a_department():
-    id = input()
+
     name = input()
     email = input()
     department_mode = input()
-    cursor.execute('INSERT INTO users (id, name, email, department_mode) VALUES (?, ?, ?, ?)', (id, name, email, department_mode))
+    cursor.execute('INSERT INTO users ( name, email, department_mode) VALUES (?, ?, ?, ?)', ( name, email, department_mode))
 def student():
     cursor.execute('SELECT * FROM Users')
     users = cursor.fetchall()
