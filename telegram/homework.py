@@ -3,7 +3,7 @@
 import sqlite3
 
 def prepod():
-    connection = sqlite3.connect('Users.db')
+    connection = sqlite3.connect('database/Users.db')
     cursor = connection.cursor()
 
     # id = input("Введите айди: ")
