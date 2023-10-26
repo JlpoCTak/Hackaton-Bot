@@ -181,10 +181,12 @@ async def admin_administrative_depart(msg: Message, state: FSMContext):
             text=f"{name[0]}",
             callback_data=f"menu_{name[0]}")
         )
-    builder.add(types.InlineKeyboardButton(
+
+    builder.row(types.InlineKeyboardButton(
         text=f'Cоздать отделение',
         callback_data=f'create_depart'
     ))
+    builder.adjust(2)
     await msg.answer(
         f'Выберите отделение от имени которого хотите войти, или создайте новое отделение',
         reply_markup=builder.as_markup()
