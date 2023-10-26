@@ -148,7 +148,7 @@ async def return_menu(msg: Message, state: FSMContext):
     builder = ReplyKeyboardBuilder()
     builder.row(
         types.KeyboardButton(text='Административные отделения', callback='administrative_department'),
-        types.KeyboardButton(text='Кнопка 2', callback_data=None),
+        types.KeyboardButton(text='Меню расписания', callback_data=None),
     )
     builder.row(
         types.KeyboardButton(text='/start', callback='start'),
