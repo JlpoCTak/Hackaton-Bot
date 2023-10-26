@@ -65,6 +65,8 @@ async def start_handler(msg: Message,state:FSMContext):
             status = 'student'
         break
 
+
+
     if status == 'admin':
         builder = InlineKeyboardBuilder()
         builder.add(types.InlineKeyboardButton(
@@ -97,6 +99,9 @@ async def start_handler(msg: Message,state:FSMContext):
             f'Привет,студент {msg.from_user.full_name}, нажми на кнопку меню',
             reply_markup=builder.as_markup()
         )
+        cursor.close()
+        connection.commit()
+        connection.close()
 
 @router.callback_query(F.data == 'admin_menu')
 async def admin_menu(callback: types.CallbackQuery,state: FSMContext):
@@ -127,10 +132,7 @@ async def admin_menu(callback: types.CallbackQuery):
     )
     await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
 
-class Loggin(StatesGroup):
-    admin_name = State()
-    admin_email = State()
-    admin_department_mode = State()
+
 @router.message(admin_FSM.enter_depart,F.text =='Административные отделения')
 async def admin_administrative_depart(msg: Message, state: FSMContext):
     connection = sqlite3.connect('database/Users.db')
@@ -147,14 +149,34 @@ async def admin_administrative_depart(msg: Message, state: FSMContext):
             text=f"{name[0]}",
             callback_data=f"menu_{name[0]}")
         )
-
+    builder.add(types.InlineKeyboardButton(
+        text=f'Cоздать отделение',
+        callback_data=f'create_depart'
+    ))
     await msg.answer(
-        f'Выберите отделение от имени которого хотите войти',
+        f'Выберите отделение от имени которого хотите войти, или создайте новое отделение',
         reply_markup=builder.as_markup()
     )
+    cursor.close()
+    connection.commit()
+    connection.close()
 
+@router.callback_query(F.data == 'create_depart')
+async def create_department(callback: types.CallbackQuery):
 
+    await callback.message.answer(f'Напишите данные административного отделения, разделяя их ";", пишите без ковычек'
+                                  f'\n(Например:"название отделения;время работы;почта;номер отделения")')
 
+    @router.message(admin_FSM.enter_depart)
+    def insert_data_depart(msg: Message):
+        connection = sqlite3.connect('database/Users.db')
+        cursor = connection.cursor()
+        data_list = list(msg.text.split(';'))
+        cursor.execute(f'INSERT INTO administrative_department (name,department_mode,email,number) VALUES (?,?,?,?)',(data_list[0],data_list[1],data_list[2],data_list[3],))
+
+        cursor.close()
+        connection.commit()
+        connection.close()
 
 
 @router.callback_query(F.data.startswith('menu_'))
@@ -188,6 +210,9 @@ async def advertisement_department(callback: types.CallbackQuery):
         for user_id in list_id_all:
             await bot.send_message(chat_id=user_id, text=f'От {name_department}:{text_push}')
 
+    cursor.close()
+    connection.commit()
+    connection.close()
 
 
 
