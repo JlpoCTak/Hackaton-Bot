@@ -5,6 +5,7 @@
 import sqlite3
 
 def prepod():
+<<<<<<< HEAD
     conn = sqlite3.connect("database/Users.db")
     cursor = conn.cursor()
     cursor.execute("SELECT weekday FROM schedule")
@@ -18,6 +19,11 @@ def prepod():
     cursor.execute("SELECT teacher FROM schedule")
     teacher = cursor.fetchall()
     file_path = print()
+=======
+
+    connection = sqlite3.connect('C:\\Users\\Sokol\\Documents\\GitHub\\Hackaton-Bot\\database\\Users.db')
+    cursor = connection.cursor()
+>>>>>>> a5b61dd4cc8e57a0f5df71c1906f5e62b402ada5
 
     def insert_link(lesson_name, link):
         query = "INSERT INTO homework (lesson_name, file_path) VALUES (?, ?);"
@@ -54,8 +60,21 @@ def prepod():
 prepod()
 
 def student():
+<<<<<<< HEAD
     weekday = input("Введите день недели: ")
     lesson_names = input("Введите урок: ")
+=======
+    connection = sqlite3.connect('Users.db')
+    cursor = connection.cursor()
+
+
+    day = input("Введите день недели: ")
+    date = input("Введите дату: ")
+    group = input("Введите группу: ")
+    teacher = input("Введите имя учителя: ")
+    lesson = input("Введите название урока: ")
+    file_path = input("Введите домашнее задание: ")
+>>>>>>> a5b61dd4cc8e57a0f5df71c1906f5e62b402ada5
 
     conn = sqlite3.connect("database/Users.db")
     cursor = conn.cursor()
@@ -67,8 +86,29 @@ def student():
         print("Дамашнее задание можно скачать здесь:", result[0])
     else:
 
+<<<<<<< HEAD
         print("По этим урокам в этот день не найдено никакого домашнего задания")
 
     conn.close()
     student()
 # выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
+=======
+
+        print("По этим урокам в этот день не найдено никакого домашнего задания")
+
+    conn.close()
+
+    print("Задание не найдено.")
+
+# выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
+# prepod()
+
+    print("По этим урокам в этот день не найдено никакого домашнего задания")
+
+    conn.close()
+
+    print("Задание не найдено.")
+
+# выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
+# prepod()
+>>>>>>> a5b61dd4cc8e57a0f5df71c1906f5e62b402ada5

@@ -9,6 +9,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup, 
 import aiogram.filters.callback_data as filters
 # from aiogram.contrib.fsm_storage.memory import MemoryStorage # Для проф бота
 from aiogram.utils.markdown import hbold
+
 from aiogram.fsm.context import FSMContext
 from aiogram.filters.state import State, StatesGroup
 from aiogram.enums import ParseMode
@@ -31,12 +32,27 @@ class admin_FSM(StatesGroup):
 
 class teacher_FSM(StatesGroup):
     take_status = State()
+    take_menu = State()
+    take_schedule = State()
+    take_groups_lessons = State()
+    contact_departments = State()
+    download_declaration = State()
+
 
 class student_FSM(StatesGroup):
     take_status = State()
+    take_menu = State()
+    take_schedule = State()
+    take_teachers_lesson = State()
+    contact_departments = State()
+    download_materials_hw = State()
+    see_curriculum = State()
+    see_declaration = State()
+    where_take_declaration = State()
+
 
 @router.message(Command("start"))
-async def start_handler(msg: Message,state:FSMContext):
+async def start_handler(msg: Message, state: FSMContext):
 
     connection = sqlite3.connect('database/Users.db')
     cursor = connection.cursor()
@@ -69,12 +85,20 @@ async def start_handler(msg: Message,state:FSMContext):
 
     if status == 'admin':
         builder = InlineKeyboardBuilder()
-        builder.add(types.InlineKeyboardButton(
+        builder.row(types.InlineKeyboardButton(
             text="Админ-панель",
             callback_data="admin_menu")
         )
+        builder.row(types.InlineKeyboardButton(
+            text="Меню преподавателей",
+            callback_data="teacher_menu")
+        )
+        builder.row(types.InlineKeyboardButton(
+            text="Меню студента",
+            callback_data="student_menu")
+        )
         await msg.answer(
-            f'Привет,Админ {msg.from_user.full_name}, нажми на кнопку, чтобы войти в админ-панель',
+            f'Привет,Админ {msg.from_user.full_name}, нажми на кнопку, чтобы войти в нужное меню',
             reply_markup=builder.as_markup()
             )
         await state.set_state(admin_FSM.take_menu)
@@ -103,17 +127,37 @@ async def start_handler(msg: Message,state:FSMContext):
         connection.commit()
         connection.close()
 
+
 @router.callback_query(F.data == 'admin_menu')
-async def admin_menu(callback: types.CallbackQuery,state: FSMContext):
+async def admin_menu(callback: types.CallbackQuery, state: FSMContext):
+    builder = ReplyKeyboardBuilder()
+    # builder.row(
+    #     types.KeyboardButton(text='Административные отделения', callback='administrative_department'),
+    #     types.KeyboardButton(text='Кнопка 2',callback_data=None),
+    # )
+    builder.row(
+        types.KeyboardButton(text='/Меню'),
+    )
+
+    await callback.message.answer(text='Войдите в главное меню:',reply_markup=builder.as_markup(resize_keyboard=True))
+
+
+@router.message(admin_FSM.take_menu,Command('Меню'))
+async def return_menu(msg: Message, state: FSMContext):
+
     builder = ReplyKeyboardBuilder()
     builder.row(
-        types.KeyboardButton(text='Административные отделения', callback_data='administrative_department'),
-        types.KeyboardButton(text='Кнопка 2',callback_data=None)
+        types.KeyboardButton(text='Административные отделения', callback='administrative_department'),
+        types.KeyboardButton(text='Кнопка 2', callback_data=None),
     )
-    await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
-    await state.set_state(admin_FSM.enter_depart)
-
-
+    builder.row(
+        types.KeyboardButton(text='/start', callback='start'),
+    )
+    builder.row(
+        types.KeyboardButton(text='/Меню'),
+    )
+    await msg.answer(text='Выберите действие:', reply_markup=builder.as_markup(resize_keyboard=True))
+    await state.set_state(admin_FSM.take_menu)
 @router.callback_query(F.data == 'teacher_menu')
 async def admin_menu(callback: types.CallbackQuery):
     builder = ReplyKeyboardBuilder()
@@ -133,8 +177,9 @@ async def admin_menu(callback: types.CallbackQuery):
     await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
 
 
-@router.message(admin_FSM.enter_depart,F.text =='Административные отделения')
+@router.message(admin_FSM.take_menu, F.text =='Административные отделения')
 async def admin_administrative_depart(msg: Message, state: FSMContext):
+    await state.set_state(admin_FSM.enter_depart)
     connection = sqlite3.connect('database/Users.db')
     cursor = connection.cursor()
     administrative_departament = f'''SELECT name FROM administrative_department'''
@@ -149,10 +194,12 @@ async def admin_administrative_depart(msg: Message, state: FSMContext):
             text=f"{name[0]}",
             callback_data=f"menu_{name[0]}")
         )
-    builder.add(types.InlineKeyboardButton(
+
+    builder.row(types.InlineKeyboardButton(
         text=f'Cоздать отделение',
         callback_data=f'create_depart'
     ))
+    builder.adjust(2)
     await msg.answer(
         f'Выберите отделение от имени которого хотите войти, или создайте новое отделение',
         reply_markup=builder.as_markup()
@@ -208,11 +255,22 @@ async def advertisement_department(callback: types.CallbackQuery):
     async def push_message(msg: Message):
         text_push = msg.text
         for user_id in list_id_all:
-            await bot.send_message(chat_id=user_id, text=f'От {name_department}:{text_push}')
+            await bot.send_message(chat_id=user_id, text=f'От {name_department}: {text_push}')
 
     cursor.close()
     connection.commit()
     connection.close()
+
+
+class Loggin(StatesGroup):
+    name_admin = State()
+    email_admin = State()
+    department_mode = State()
+@router.callback_query(F.data == 'administrative_department')
+async def admin_adminis_depart(msg: Message, State: FSMContext):
+    await message.answer(
+        text="Введите название департамента"
+    )
 
 
 
