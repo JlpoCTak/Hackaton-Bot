@@ -28,19 +28,15 @@ def prepod():
         cursor.execute(query, (lesson_name, link))
         conn.commit()
 
-    while True:
-        data1 = input("Введите дату в формате 'дд.мм.гг': ")
-        lesson_names = []
-        for res in cursor.execute("SELECT * FROM Schedule"):
-            lesson_names.append(res[4])
-            print(lesson_names)
-        for lesson_name in lesson_names:
-            link = input(f"{lesson_name} - Введите ссылку на задание: ")
-            insert_link(lesson_name, link)
-        break
+    data1 = input("Введите дату в формате 'дд.мм.гг': ")
+    lesson_names = []
+    for res in cursor.execute("SELECT * FROM Schedule WHERE data = ?", (data1,)):
+        lesson_names.append(res[4])
+    for lesson_name in lesson_names:
+        link = input(f"{lesson_name} - Введите ссылку на задание: ")
+        insert_link(lesson_name, link)
 
     # cursor.execute("SELECT * FROM Schedule WHERE data = ? and lesson_name = ?", data1, lesson_name1)
-
     #вводим дату название пары с помощь. sql select *from таблица дата = дата урок = урок через цикл задавать дз
 
     conn = sqlite3.connect("database/Users.db")
@@ -62,14 +58,12 @@ def student():
     connection = sqlite3.connect('Users.db')
     cursor = connection.cursor()
 
-
     day = input("Введите день недели: ")
     date = input("Введите дату: ")
     group = input("Введите группу: ")
     teacher = input("Введите имя учителя: ")
     lesson = input("Введите название урока: ")
     file_path = input("Введите домашнее задание: ")
-
 
     conn = sqlite3.connect("database/Users.db")
     cursor = conn.cursor()
@@ -83,20 +77,7 @@ def student():
         print("По этим урокам в этот день не найдено никакого домашнего задания")
     conn.close()
     student()
-# выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
-    print("По этим урокам в этот день не найдено никакого домашнего задания")
 
-    conn.close()
-
-    print("Задание не найдено.")
 
 # выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
-# prepod()
-
-    print("По этим урокам в этот день не найдено никакого домашнего задания")
-
-    conn.close()
-    print("Задание не найдено.")
-
-# выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
-# prepod()
+# 
