@@ -1,23 +1,29 @@
 # id den nedel data group prepod predmet ssilka dz
+# выбирает день урок и прикрепляет файл для скачивания
+#выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
 
 import sqlite3
 
+
 def prepod():
-    connection = sqlite3.connect('database/Users.db')
+<<<<<<< HEAD
+=======
+    connection = sqlite3.connect('C:\\Users\\Sokol\\Documents\\GitHub\\Hackaton-Bot\\database\\Users.db')
     cursor = connection.cursor()
 
     # id = input("Введите айди: ")
     weak_day = input("Введите день недели: ")
     data = input("Введите дату: ")
-    group = input("Введите группу: ")
+    student_class = input("Введите группу: ")
     teacher = input("Введите учителя: ")
     lesson = input("Введите урок: ")
     href = 'database/homework/dz.docx'
 
+    connection.execute(
+        "INSERT INTO homework VALUES (id = ?, weak_day = ?, data = ?, student_class = ?, teacher = ?, lesson = ?, href = ?)",
+        (id, weak_day, data, student_class, teacher, lesson, href))
 
-    # connection.execute("INSERT INTO homework VALUES (id = ?, weak_day = ?, data = ?, group = ?, teacher = ?, lesson = ?, href = ?)", (id, weak_day, data, group, teacher, lesson, href))
-
-    cursor.execute("INSERT INTO homework VALUES (?, ?, ?, ?, ?, ?)", (weak_day, data, group, teacher, lesson, href))
+    cursor.execute("INSERT INTO homework VALUES (?, ?, ?, ?, ?, ?)", (weak_day, data, student_class, teacher, lesson, href))
 
     connection.commit()
     print("Задание добавлено успешно!")
@@ -25,23 +31,54 @@ def prepod():
     connection.commit()
     connection.close()
     # выбирает день урок и прикрепляет файл для скачивания
+
+
 prepod()
+
 def student():
     connection = sqlite3.connect('Users.db')
     cursor = connection.cursor()
 
+>>>>>>> 83d73640847988f26e1374a0693cc13697224355
     day = input("Введите день недели: ")
-    lesson = input("Введите урок: ")
+    date = input("Введите дату: ")
+    group = input("Введите группу: ")
+    teacher = input("Введите имя учителя: ")
+    lesson = input("Введите название урока: ")
+    file_path = input("Введите домашнее задание: ")
 
-    cursor.execute('SELECT * FROM href')
-    connection.execute("SELECT homework FROM href WHERE day=? AND lesson=?", (day, lesson))
+    conn = sqlite3.connect("database/Users.db")
+    cursor = conn.cursor()
 
-    # Вывод задания, если оно найдено
-    href = connection.fetchone()
-    if href:
-        print("Скачать задание:", href[0])
+    # Use a parameterized query
+    cursor.execute("INSERT INTO homework (day, date, group_name, teacher, lesson, file_path) VALUES (?, ?, ?, ?, ?, ?)",
+                   (day, date, group, teacher, lesson, file_path))
+
+    conn.commit()
+    conn.close()
+
+def student():
+    day = input("Введите день недели: ")
+    lesson = input("Введите урон: ")
+
+    conn = sqlite3.connect("database/Users.db")
+    cursor = conn.cursor()
+
+    # Use a parameterized query
+    cursor.execute("SELECT file_path FROM homework WHERE day = ? AND lesson = ?", (day, lesson))
+    result = cursor.fetchone()
+
+    if result:
+        print("Дамашнее задание можно скачать здесь:", result[0])
     else:
+<<<<<<< HEAD
+        print("По этим урокам в этот день не найдено никакого домашнего задания")
+
+    conn.close()
+student()
+=======
         print("Задание не найдено.")
     connection.close()
-#выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
+# выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
 # prepod()
+>>>>>>> 83d73640847988f26e1374a0693cc13697224355
