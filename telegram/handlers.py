@@ -32,14 +32,27 @@ class admin_FSM(StatesGroup):
 
 class teacher_FSM(StatesGroup):
     take_status = State()
+    take_menu = State()
+    take_schedule = State()
+    take_groups_lessons = State()
+    contact_departments = State()
+    download_declaration = State()
+
 
 class student_FSM(StatesGroup):
     take_status = State()
-
+    take_menu = State()
+    take_schedule = State()
+    take_teachers_lesson = State()
+    contact_departments = State()
+    download_materials_hw = State()
+    see_curriculum = State()
+    see_declaration = State()
+    where_take_declaration = State()
 
 
 @router.message(Command("start"))
-async def start_handler(msg: Message,state:FSMContext):
+async def start_handler(msg: Message, state: FSMContext):
 
     connection = sqlite3.connect('database/Users.db')
     cursor = connection.cursor()
