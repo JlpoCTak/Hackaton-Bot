@@ -19,11 +19,11 @@ def prepod():
     teacher = cursor.fetchall()
     file_path = print()
 
-<<<<<<< Updated upstream
-=======
+
+
     connection = sqlite3.connect('database/Users.db')
     cursor = connection.cursor()
->>>>>>> Stashed changes
+
 
     # connection = sqlite3.connect('C:\\Users\\Sokol\\Documents\\GitHub\\Hackaton-Bot\\database\\Users.db')
     # cursor = connection.cursor()
