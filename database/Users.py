@@ -3,7 +3,7 @@ import sqlite3
 connection = sqlite3.connect('Users.db')
 cursor = connection.cursor()
 
-async def connect_to_db('User.db'):
+async def connect_to_db('Users.db'):
 conn = await connect(
 id='id',
 weekday='weekday',
