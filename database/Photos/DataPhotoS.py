@@ -47,3 +47,19 @@ def get_text_1(message):
     data= [nazvanie, cost, img]
     cursor.execute("INSERT INTO katalog VALUES(?, ?);", data)
     conn.commit()
+
+#отправка списка студенту/преподу
+
+
+con = sqlite3.connect('DataBaseForTeatcher.db')
+cur = con.cursor()
+cur.execute("""SELECT * FROM revense""")
+result = cur.fetchall()
+
+@dp.message_handler()
+async def get_profile(message: types.Message):
+    for photoname in result:
+        await bot.send_message(message.from_user.id, photoname[0])'\n'.join(result)
+
+if __name__ == '__main__':
+    executor.start_polling(dp)
