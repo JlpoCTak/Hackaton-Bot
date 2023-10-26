@@ -28,6 +28,7 @@ bot = Bot(token=TOKEN,parse_mode=ParseMode.HTML)
 class admin_FSM(StatesGroup):
     take_status = State()
     take_menu = State()
+    confirmation_teachers1 = State()
     enter_depart = State()
 
 class teacher_FSM(StatesGroup):
@@ -123,10 +124,68 @@ async def start_handler(msg: Message, state: FSMContext):
             f'Привет,студент {msg.from_user.full_name}, нажми на кнопку меню',
             reply_markup=builder.as_markup()
         )
+    elif status == 0:
+        builder = InlineKeyboardBuilder()
+        builder.row(types.InlineKeyboardButton(
+            text="Я студент",
+            callback_data="student_form")
+        )
+        builder.row(types.InlineKeyboardButton(
+            text="Я преподователь",
+            callback_data="confirmation_teacher")
+        )
+        await msg.answer(f'Привет, выбери ты новичок или студент',reply_markup=builder.as_markup())
+
+
+
+    cursor.close()
+    connection.commit()
+    connection.close()
+
+
+@router.callback_query(F.data == 'student_form')
+async def student_form(callback: types.CallbackQuery, state: FSMContext):
+    await state.set_state(student_FSM.take_status)
+    await callback.message.answer('Введите информацию о себе, разделяя их ";", пишите без ковычек'
+                          f'\n(Например:"ФИО;группа;курс")')
+    @router.message(student_FSM.take_status)
+    async def write_student_db(msg: Message):
+        connection = sqlite3.connect('database/Users.db')
+        cursor = connection.cursor()
+        data_student = list(msg.text.split(';'))
+        user_id = msg.from_user.id
+        cursor.execute(f'INSERT INTO Student (Fio, Group_stud, Course, Tg_users_ID) VALUES (?, ?, ?, ?)',(data_student[0], data_student[1], data_student[2],user_id))
+
+        builder = ReplyKeyboardBuilder()
+        builder.add(
+            types.KeyboardButton(text='/start')
+        )
+        await msg.answer(text='Нажми кнопку старт чтобы начать, как студент',reply_markup=builder.as_markup(resize_keyboard=True))
+
         cursor.close()
         connection.commit()
         connection.close()
 
+
+@router.callback_query(F.data == 'confirmation_teacher')
+async def student_form(callback: types.CallbackQuery, state: FSMContext):
+    await state.set_state(teacher_FSM.take_status)
+    await callback.message.answer('Введите информацию о себе, разделяя их ";", пишите без ковычек'
+                            f'\n(Например:"Фамилия Имя Отчество;Кабинет;группа которой курируете")')
+
+    @router.message(teacher_FSM.take_status)
+    async def write_student_db(msg: Message):
+        connection = sqlite3.connect('database/Users.db')
+        cursor = connection.cursor()
+        data_student = list(msg.text.split(';'))
+        user_id = msg.from_user.id
+        cursor.execute(f'INSERT INTO conformition_teacher (Fio, Classroom, Group_curate, Tg_users_ID) VALUES (?, ?, ?, ?)', (data_student[0], data_student[1], data_student[2],user_id))
+
+        await msg.answer(text='Нам нужно подтвердить, что вы преподователь, ждите, когда вам придет уведомление')
+
+        cursor.close()
+        connection.commit()
+        connection.close()
 
 @router.callback_query(F.data == 'admin_menu')
 async def admin_menu(callback: types.CallbackQuery, state: FSMContext):
@@ -151,13 +210,79 @@ async def return_menu(msg: Message, state: FSMContext):
         types.KeyboardButton(text='Меню расписания', callback_data=None),
     )
     builder.row(
+        types.KeyboardButton(text='/Меню пользователей'),
+        types.KeyboardButton(text='Подтверждение преподавателей')
+    )
+    builder.row(
         types.KeyboardButton(text='/start', callback='start'),
     )
     builder.row(
         types.KeyboardButton(text='/Меню'),
     )
+
     await msg.answer(text='Выберите действие:', reply_markup=builder.as_markup(resize_keyboard=True))
     await state.set_state(admin_FSM.take_menu)
+
+
+@router.message(admin_FSM.take_menu, F.text == 'Подтверждение преподавателей')
+async def confirmation_teacher(msg: Message, state: FSMContext):
+    await state.set_state(admin_FSM.confirmation_teachers1)
+    connection = sqlite3.connect('database/Users.db')
+    cursor = connection.cursor()
+    mb_teachers = cursor.execute('SELECT * FROM conformition_teacher')
+    list_data_mb_teachers = []
+    for mb_teacher in mb_teachers:
+        list_data = []
+        id1 = mb_teacher[0]
+        fio = mb_teacher[1]
+        classroom = mb_teacher[2]
+        group_curate = mb_teacher[3]
+        tg_user_id = mb_teacher[4]
+        list_data.append(id1)
+        list_data.append(fio)
+        list_data.append(classroom)
+        list_data.append(group_curate)
+        list_data.append(tg_user_id)
+        list_data_mb_teachers.append(list_data)
+
+    await msg.answer(text=f'Преподавателей на подтверждение: {len(list_data_mb_teachers)}')
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        types.KeyboardButton(text='Подтвердить'),
+    )
+    builder.row(
+        types.KeyboardButton(text='Удалить'),
+    )
+    for teacher_mb in list_data_mb_teachers:
+
+        await msg.answer(text=f'ФИО: {teacher_mb[1]}'
+                              f'\nКабинет: {teacher_mb[2]}'
+                              f'\nКурирует группу: {teacher_mb[3]}',
+                         reply_markup=builder.as_markup(resize_keyboard=True))
+
+        @router.message(admin_FSM.confirmation_teachers1,F.text == 'Подтвердить')
+        async def confirm_teacher(msg: Message):
+            fio = teacher_mb[1]
+            classroom = teacher_mb[2]
+            group_curate = teacher_mb[3]
+            user_id = teacher_mb[4]
+            cursor.execute('INSERT INTO Teacher (Fio,Classroom, Group_curate, Tg_users_ID) VALUES (?,?,?,?)',(fio, classroom, group_curate,user_id))
+            cursor.execute('DELETE FROM conformition_teacher WHERE Tg_users_ID = ?', (user_id,))
+            await msg.answer('Преподователь подтвержден')
+            await bot.send_message(chat_id=user_id, text='Вы подтверждены, как преподователь!')
+
+        @router.message(admin_FSM.confirmation_teachers1, F.text == 'Удалить')
+        async def delete_teacher(msg: Message):
+            user_id = teacher_mb[4]
+            cursor.execute('DELETE FROM conformition_teacher WHERE Tg_users_ID = ?', (user_id,))
+            await msg.answer('Преподователь удален')
+            await bot.send_message(chat_id=user_id, text='Вы не подтверждены!')
+        
+    cursor.close()
+    connection.commit()
+    connection.close()
+
+
 @router.callback_query(F.data == 'teacher_menu')
 async def admin_menu(callback: types.CallbackQuery):
     builder = ReplyKeyboardBuilder()
@@ -174,7 +299,7 @@ async def admin_menu(callback: types.CallbackQuery):
         types.KeyboardButton(text='Уч. материалы и д/з', callback_data=None),
         types.KeyboardButton(text='Расписание',callback_data='Schedule')
     )
-    await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
+    await callback.message.answer(text='Выберите действие:', reply_markup=builder.as_markup(resize_keyboard=True))
 
 
 
@@ -262,17 +387,3 @@ async def advertisement_department(callback: types.CallbackQuery):
     cursor.close()
     connection.commit()
     connection.close()
-
-
-class Loggin(StatesGroup):
-    name_admin = State()
-    email_admin = State()
-    department_mode = State()
-@router.callback_query(F.data == 'administrative_department')
-async def admin_adminis_depart(msg: Message, State: FSMContext):
-    await message.answer(
-        text="Введите название департамента"
-    )
-
-
-
