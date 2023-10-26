@@ -6,8 +6,7 @@ import sqlite3
 
 
 def prepod():
-<<<<<<< HEAD
-=======
+
     connection = sqlite3.connect('C:\\Users\\Sokol\\Documents\\GitHub\\Hackaton-Bot\\database\\Users.db')
     cursor = connection.cursor()
 
@@ -39,7 +38,6 @@ def student():
     connection = sqlite3.connect('Users.db')
     cursor = connection.cursor()
 
->>>>>>> 83d73640847988f26e1374a0693cc13697224355
     day = input("Введите день недели: ")
     date = input("Введите дату: ")
     group = input("Введите группу: ")
@@ -71,14 +69,13 @@ def student():
     if result:
         print("Дамашнее задание можно скачать здесь:", result[0])
     else:
-<<<<<<< HEAD
+
         print("По этим урокам в этот день не найдено никакого домашнего задания")
 
     conn.close()
-student()
-=======
-        print("Задание не найдено.")
-    connection.close()
+
+    print("Задание не найдено.")
+
 # выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
 # prepod()
->>>>>>> 83d73640847988f26e1374a0693cc13697224355
+
