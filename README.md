@@ -1,2 +1,2 @@
-# Hackaton-Bot
+# Hackaton-Bot Бригада
  

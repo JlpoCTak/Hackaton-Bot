@@ -1,7 +1,7 @@
 import time
 import logging
 
-from aiogram import types, F, Router
+from aiogram import types, F, Router, Bot
 from aiogram.handlers import message
 from aiogram.types import Message
 from aiogram.filters import Command, CommandStart
@@ -11,17 +11,18 @@ import aiogram.filters.callback_data as filters
 from aiogram.utils.markdown import hbold
 from aiogram.fsm.context import FSMContext
 from aiogram.filters.state import State, StatesGroup
+from aiogram.enums import ParseMode
 import json
 from kb import keyboard1, keyboard2
 import sqlite3
-
+import os
 
 # from kb import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 # import text
-
+TOKEN = os.environ['TOKEN']
 # from prof_test import test_holland
 router = Router()
-
+bot = Bot(token=TOKEN,parse_mode=ParseMode.HTML)
 
 @router.message(Command("start"))
 async def start_handler(msg: Message):
@@ -122,22 +123,49 @@ class Loggin(StatesGroup):
 async def admin_administrative_depart(msg: Message, state: FSMContext):
     connection = sqlite3.connect('database/Users.db')
     cursor = connection.cursor()
-    user_check_administrative_departament = f'''SELECT EXISTS(SELECT name FROM administrative_department WHERE name= ?)'''
-    name = message
-    print(name)
-    check_administrative_departament = cursor.execute(user_check_administrative_departament, (name,))
+    administrative_departament = f'''SELECT name FROM administrative_department'''
+    # name = msg.text
+    # print(name)
+    check_administrative_departament = cursor.execute(administrative_departament)
+    # print(list(check_administrative_departament))
+    builder = InlineKeyboardBuilder()
+
+    for name in list(check_administrative_departament):
+        builder.add(types.InlineKeyboardButton(
+            text=f"{name[0]}",
+            callback_data=f"menu_{name[0]}")
+        )
 
     await msg.answer(
-        text= "Введите название департамента",
+        f'Выберите отделение от имени которого хотите войти',
+        reply_markup=builder.as_markup()
     )
-    for check1 in check_administrative_departament:
-        if list(check1)[0] == 1:
-            status1 = 'Вы вошли в департамент'
-        break
 
-    print(status1)
+@router.callback_query(F.data.startswith('menu_'))
+async def advertisement_departmant(callback: types.CallbackQuery):
+    connection = sqlite3.connect('database/Users.db')
+    cursor = connection.cursor()
+    administrative_departament = f'''SELECT name FROM administrative_department'''
+    check_administrative_departament = cursor.execute(administrative_departament)
+    list_id_student = []
+    list_id_teacher = []
+    list_id_admin = []
 
-    if status1 == 'Вы вошли в департамент':
-        await msg.anwer()
+    user_id_student = cursor.execute(f'''SELECT Tg_users_ID FROM Student''')
+    for user in user_id_student:
+        list_id_student.append(user[0])
+    user_id_teacher = cursor.execute(f'''SELECT Tg_users_ID FROM Teacher''')
+    for user in user_id_teacher:
+        list_id_teacher.append(user[0])
+    user_id_admin = cursor.execute(f'''SELECT Tg_users_ID FROM Admin''')
+    for user in user_id_admin:
+        list_id_admin.append(user[0])
 
+    list_id_all = list_id_student+list_id_teacher+list_id_admin
+
+    name_departmant = callback.data.split('_')[1]
+    text_push = callback.message.text
+    for user_id in list_id_all:
+        await bot.send_message(chat_id=user_id,text=f'От {name_departmant}:{text_push}')
+    await callback.message.answer(text='Напишите ваше сообщение')
 
