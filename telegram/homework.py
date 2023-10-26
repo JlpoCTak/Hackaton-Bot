@@ -5,7 +5,6 @@
 import sqlite3
 
 def prepod():
-<<<<<<< HEAD
     conn = sqlite3.connect("database/Users.db")
     cursor = conn.cursor()
     cursor.execute("SELECT weekday FROM schedule")
@@ -19,11 +18,10 @@ def prepod():
     cursor.execute("SELECT teacher FROM schedule")
     teacher = cursor.fetchall()
     file_path = print()
-=======
 
-    connection = sqlite3.connect('C:\\Users\\Sokol\\Documents\\GitHub\\Hackaton-Bot\\database\\Users.db')
-    cursor = connection.cursor()
->>>>>>> a5b61dd4cc8e57a0f5df71c1906f5e62b402ada5
+
+    # connection = sqlite3.connect('C:\\Users\\Sokol\\Documents\\GitHub\\Hackaton-Bot\\database\\Users.db')
+    # cursor = connection.cursor()
 
     def insert_link(lesson_name, link):
         query = "INSERT INTO homework (lesson_name, file_path) VALUES (?, ?);"
@@ -32,15 +30,13 @@ def prepod():
 
     while True:
         data1 = input("Введите дату в формате 'дд.мм.гг': ")
-        lesson_name = input("Введите название предмета: ")
+        lesson_names = []
         for res in cursor.execute("SELECT * FROM Schedule"):
-            lesson_name = res[0]
-            link = input()
-            insert_link()
-        print(lesson_name)
-        for lesson_name in lesson_name:
-            link = input(f"{lesson_name[0]} - Введите ссылку на задание: ")
-            insert_link(lesson_name[0], link)
+            lesson_names.append(res[4])
+            print(lesson_names)
+        for lesson_name in lesson_names:
+            link = input(f"{lesson_name} - Введите ссылку на задание: ")
+            insert_link(lesson_name, link)
         break
 
     # cursor.execute("SELECT * FROM Schedule WHERE data = ? and lesson_name = ?", data1, lesson_name1)
@@ -51,7 +47,7 @@ def prepod():
     cursor = conn.cursor()
 
     cursor.execute("INSERT INTO homework (weekday, group_name, teacher, lesson_name, data, file_path) VALUES (?, ?, ?, ?, ?, ?)",
-                   (weekday, group_name, teacher, lesson_names, data1,  file_path))
+                   (weekday, group_name, teacher, lesson_name, data1,  file_path))
 
     conn.commit()
     conn.close()
@@ -60,10 +56,9 @@ def prepod():
 prepod()
 
 def student():
-<<<<<<< HEAD
+
     weekday = input("Введите день недели: ")
     lesson_names = input("Введите урок: ")
-=======
     connection = sqlite3.connect('Users.db')
     cursor = connection.cursor()
 
@@ -74,7 +69,7 @@ def student():
     teacher = input("Введите имя учителя: ")
     lesson = input("Введите название урока: ")
     file_path = input("Введите домашнее задание: ")
->>>>>>> a5b61dd4cc8e57a0f5df71c1906f5e62b402ada5
+
 
     conn = sqlite3.connect("database/Users.db")
     cursor = conn.cursor()
@@ -85,16 +80,11 @@ def student():
     if result:
         print("Дамашнее задание можно скачать здесь:", result[0])
     else:
-
-<<<<<<< HEAD
         print("По этим урокам в этот день не найдено никакого домашнего задания")
-
     conn.close()
     student()
 # выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
-=======
-
-        print("По этим урокам в этот день не найдено никакого домашнего задания")
+    print("По этим урокам в этот день не найдено никакого домашнего задания")
 
     conn.close()
 
@@ -106,9 +96,7 @@ def student():
     print("По этим урокам в этот день не найдено никакого домашнего задания")
 
     conn.close()
-
     print("Задание не найдено.")
 
 # выбирает день урок и если есть прикрепленный файл то имеет возможность скачать его
 # prepod()
->>>>>>> a5b61dd4cc8e57a0f5df71c1906f5e62b402ada5
