@@ -7,8 +7,6 @@ import sqlite3
 def prepod():
     conn = sqlite3.connect("database/Users.db")
     cursor = conn.cursor()
-    conn = sqlite3.connect("database/Users.db")
-    cursor = conn.cursor()
     cursor.execute("SELECT weekday FROM schedule")
     weekday = cursor.fetchall()
     conn = sqlite3.connect("database/Users.db")
@@ -19,21 +17,36 @@ def prepod():
     cursor = conn.cursor()
     cursor.execute("SELECT teacher FROM schedule")
     teacher = cursor.fetchall()
-    lesson_name = input("Введите название предмета: ")
-    data1 = input("Введите дату: ")
-    file_path = input("Введите домашнее задание")
+    file_path = print()
 
-    # print(group_name)
-    # print(lesson_name)
-    # print(teacher)
+    def insert_link(lesson_name, link):
+        query = "INSERT INTO homework (lesson_name, file_path) VALUES (?, ?);"
+        cursor.execute(query, (lesson_name, link))
+        conn.commit()
+
+    while True:
+        data1 = input("Введите дату в формате 'дд.мм.гг': ")
+        lesson_name = input("Введите название предмета: ")
+        for res in cursor.execute("SELECT * FROM Schedule"):
+            lesson_name = res[0]
+            link = input()
+            insert_link()
+        print(lesson_name)
+        for lesson_name in lesson_name:
+            link = input(f"{lesson_name[0]} - Введите ссылку на задание: ")
+            insert_link(lesson_name[0], link)
+        break
+
+    # cursor.execute("SELECT * FROM Schedule WHERE data = ? and lesson_name = ?", data1, lesson_name1)
+
+    #вводим дату название пары с помощь. sql select *from таблица дата = дата урок = урок через цикл задавать дз
 
     conn = sqlite3.connect("database/Users.db")
     cursor = conn.cursor()
 
     cursor.execute("INSERT INTO homework (weekday, group_name, teacher, lesson_name, data, file_path) VALUES (?, ?, ?, ?, ?, ?)",
-                   (weekday, group_name, teacher, lesson_name, data1,  file_path))
+                   (weekday, group_name, teacher, lesson_names, data1,  file_path))
 
-    cursor.execute("SELECT * FROM Schedule WHERE data = ? and lesson_name = ?", data1, lesson_name)
     conn.commit()
     conn.close()
     # выбирает день урок и прикрепляет файл для скачивания
@@ -42,12 +55,12 @@ prepod()
 
 def student():
     weekday = input("Введите день недели: ")
-    lesson_name = input("Введите урок: ")
+    lesson_names = input("Введите урок: ")
 
     conn = sqlite3.connect("database/Users.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT file_path FROM homework WHERE weekday = ? AND lesson_name = ?", (weekday, lesson_name))
+    cursor.execute("SELECT file_path FROM homework WHERE weekday = ? AND lesson_name = ?", (weekday, lesson_names))
     result = cursor.fetchone()
 
     if result:
