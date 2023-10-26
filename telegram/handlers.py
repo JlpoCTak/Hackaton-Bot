@@ -148,7 +148,7 @@ async def return_menu(msg: Message, state: FSMContext):
     builder = ReplyKeyboardBuilder()
     builder.row(
         types.KeyboardButton(text='Административные отделения', callback='administrative_department'),
-        types.KeyboardButton(text='Кнопка 2', callback_data=None),
+        types.KeyboardButton(text='Меню расписания', callback_data=None),
     )
     builder.row(
         types.KeyboardButton(text='/start', callback='start'),
@@ -172,9 +172,11 @@ async def admin_menu(callback: types.CallbackQuery):
     builder = ReplyKeyboardBuilder()
     builder.row(
         types.KeyboardButton(text='Уч. материалы и д/з', callback_data=None),
-        types.KeyboardButton(text='Расписание',callback_data=None)
+        types.KeyboardButton(text='Расписание',callback_data='Schedule')
     )
     await callback.message.answer(text='Выберите действие:',reply_markup=builder.as_markup(resize_keyboard=True))
+
+
 
 
 @router.message(admin_FSM.take_menu, F.text =='Административные отделения')

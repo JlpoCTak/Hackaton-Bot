@@ -92,9 +92,3 @@ async def Schedules(callback: types.CallbackQuery):
             f'Вот расписание на данную дату')
 
 
-from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup, InlineKeyboardButton
-btn1 = InlineKeyboardButton(
-text='Заявления',
-url='https://cloud.mail.ru/public/XWgS/YnJdeXu9j'
-
-)
