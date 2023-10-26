@@ -1,5 +1,6 @@
 import time
 import logging
+
 from aiogram import types, F, Router, Bot
 from aiogram.handlers import message
 from aiogram.types import Message
@@ -13,8 +14,6 @@ from aiogram.filters.state import State, StatesGroup
 from aiogram.enums import ParseMode
 import sqlite3
 import os
-
-#from database.Users import Schedule
 
 # from kb import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 # import text
@@ -90,5 +89,4 @@ async def Schedules(callback: types.CallbackQuery):
     if status == 'Расписание на эту дату есть':
         await callback.message.reply(
             f'Вот расписание на данную дату')
-
-
+# копиурю хэндлерс.пай роутер мсдж 2 меню расписания импорт иксел

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
 <<<<<<< HEAD
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
-=======
   <component name="Black">
     <option name="sdkName" value="Python 3.11 (Hackaton-Bot)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (Hackaton-Bot)" project-jdk-type="Python SDK" />
->>>>>>> 5c9e6893d576ace3e83d8991a1ee59c81e0867e8
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
+>>>>>>> 9d42333c939437adae09d36b36076eeb49e1da41
 </project>

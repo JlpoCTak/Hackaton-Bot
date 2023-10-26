@@ -6,7 +6,7 @@ import os
 from aiogram import Bot, Dispatcher, Router, types
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
-from handlers_test import router
+from handlers1 import router
 
 
 TOKEN = os.environ['TOKEN']
@@ -22,4 +22,3 @@ async def main():
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
-
