@@ -15,6 +15,8 @@ from aiogram.enums import ParseMode
 import sqlite3
 import os
 
+from database.Users import Schedule
+
 # from kb import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 # import text
 
@@ -50,7 +52,9 @@ async def admin_menu(callback: types.CallbackQuery):
 async def Schedules(callback: types.CallbackQuery):
     connection = sqlite3.connect('database/User.db')
     cursor = connection.cursor()
-    connection.execute(f'''Select (id, weekday, student_class, teacher, leasson_name, leasson_number, classroom, data) from Schedule Values(?, ?, ?, ?, ?, ?, ?, ?,) ''')
+    connection.execute(f'''Select 
+    (id, weekday, student_class, teacher, leasson_name, leasson_number, classroom, data)
+     from Schedule Values(?, ?, ?, ?, ?, ?, ?, ?,) ''').fetchall()
     Schedules_list = ['id', 'weekday', 'student_class', 'teacher', 'leasson_name', 'leasson_number', 'classroom', 'data']
     data = Schedules_list
     teacher = Schedules_list
@@ -84,7 +88,20 @@ async def Schedules(callback: types.CallbackQuery):
 
     print (status)
 
-    data_Schedule = callback.data.split('_')[1]
-    text_push = callback.message.text
+    if status == 'Расписание на эту дату есть':
+        await callback.message.reply(
+            f'Вот расписание на данную дату')
+
+    for row in data:
+    await message.answer(str(row))
+    await get_data_from_db('User.db')
 
     await bot.send_message(text="Расписание на текущую неделю ",)
+
+#for row in data:
+#await message.answer(str(row))
+
+#@dp.message_handler(commands=['get_data'])
+#async def handle_get_data_command(message: types.Message):
+# Получение данных из базы данных
+#data = await get_data_from_db()
