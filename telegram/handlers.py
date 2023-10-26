@@ -214,6 +214,7 @@ async def advertisement_department(callback: types.CallbackQuery):
     connection.commit()
     connection.close()
 
+
 class Loggin(StatesGroup):
     name_admin = State()
     email_admin = State()
@@ -223,5 +224,6 @@ async def admin_adminis_depart(msg: Message, State: FSMContext):
     await message.answer(
         text="Введите название департамента"
     )
+
 
 
