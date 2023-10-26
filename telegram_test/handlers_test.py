@@ -91,17 +91,3 @@ async def Schedules(callback: types.CallbackQuery):
     if status == 'Расписание на эту дату есть':
         await callback.message.reply(
             f'Вот расписание на данную дату')
-
-    for row in data:
-    await message.answer(str(row))
-    await get_data_from_db('User.db')
-
-    await bot.send_message(text="Расписание на текущую неделю ",)
-
-#for row in data:
-#await message.answer(str(row))
-
-#@dp.message_handler(commands=['get_data'])
-#async def handle_get_data_command(message: types.Message):
-# Получение данных из базы данных
-#data = await get_data_from_db()
