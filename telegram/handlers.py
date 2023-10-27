@@ -1,3 +1,4 @@
+import asyncio
 import time
 import logging
 
@@ -29,6 +30,7 @@ class admin_FSM(StatesGroup):
     take_status = State()
     take_menu = State()
     confirmation_teachers1 = State()
+    decision_teacher = State()
     enter_depart = State()
 
 class teacher_FSM(StatesGroup):
@@ -246,41 +248,61 @@ async def confirmation_teacher(msg: Message, state: FSMContext):
         list_data_mb_teachers.append(list_data)
 
     await msg.answer(text=f'Преподавателей на подтверждение: {len(list_data_mb_teachers)}')
-    builder = ReplyKeyboardBuilder()
+    builder = InlineKeyboardBuilder()
     builder.row(
-        types.KeyboardButton(text='Подтвердить'),
+        types.InlineKeyboardButton(text='Подтвердить',callback_data='confirm_teacher'),
     )
     builder.row(
-        types.KeyboardButton(text='Удалить'),
+        types.InlineKeyboardButton(text='Удалить',callback_data='delete_teacher'),
     )
-    for teacher_mb in list_data_mb_teachers:
+    current_state = str(await state.get_state())
 
+
+    proverka=0
+    # if current_state== 'admin_FSM:confirmation_teachers1':
+    #     # print('foighfd;kghnfdghfdg')
+    for teacher_mb in list_data_mb_teachers:
+        a=0
         await msg.answer(text=f'ФИО: {teacher_mb[1]}'
                               f'\nКабинет: {teacher_mb[2]}'
                               f'\nКурирует группу: {teacher_mb[3]}',
                          reply_markup=builder.as_markup(resize_keyboard=True))
 
-        @router.message(admin_FSM.confirmation_teachers1,F.text == 'Подтвердить')
-        async def confirm_teacher(msg: Message):
+        @router.callback_query(F.data == 'confirm_teacher')
+        async def confirm_teacher(callback: types.CallbackQuery):
             fio = teacher_mb[1]
             classroom = teacher_mb[2]
             group_curate = teacher_mb[3]
             user_id = teacher_mb[4]
             cursor.execute('INSERT INTO Teacher (Fio,Classroom, Group_curate, Tg_users_ID) VALUES (?,?,?,?)',(fio, classroom, group_curate,user_id))
             cursor.execute('DELETE FROM conformition_teacher WHERE Tg_users_ID = ?', (user_id,))
-            await msg.answer('Преподователь подтвержден')
+            await callback.message.answer('Преподователь подтвержден')
             await bot.send_message(chat_id=user_id, text='Вы подтверждены, как преподователь!')
+            global proverka
+            proverka = 1
 
-        @router.message(admin_FSM.confirmation_teachers1, F.text == 'Удалить')
-        async def delete_teacher(msg: Message):
+        @router.callback_query(F.data == 'delete_teacher')
+        async def delete_teacher(callback: types.CallbackQuery):
             user_id = teacher_mb[4]
             cursor.execute('DELETE FROM conformition_teacher WHERE Tg_users_ID = ?', (user_id,))
-            await msg.answer('Преподователь удален')
+            await callback.message.answer('Преподователь удален')
             await bot.send_message(chat_id=user_id, text='Вы не подтверждены!')
-        
-    cursor.close()
-    connection.commit()
-    connection.close()
+
+            global proverka
+            proverka = 1
+
+        if proverka==1:
+            print('qwerty')
+
+            proverka=0
+            continue
+        else:
+            print('sdasdsad')
+            await asyncio.sleep(1)
+
+
+    await state.set_state(admin_FSM.confirmation_teachers1)
+
 
 
 @router.callback_query(F.data == 'teacher_menu')
