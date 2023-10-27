@@ -91,3 +91,19 @@ async def Schedules(callback: types.CallbackQuery):
     if status == 'Расписание на эту дату есть':
         await callback.message.reply(
             f'Вот расписание на данную дату')
+
+
+@router.message(F.data == 'Schedule')
+async def handle_data_command(msg:Message):
+    connection = sqlite3.connect('database/User.db')
+    cursor = connection.cursor()
+    Schedule = "SELECT * FROM Schedule"
+    cursor.execute(Schedule)
+
+    rows = cursor.fetchall()
+
+    for row in rows:
+        await message.answer(str(row))
+
+
+    connection.close()
